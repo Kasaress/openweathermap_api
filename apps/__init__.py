@@ -7,7 +7,7 @@ from importlib import import_module
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+from modules.managers import GeoManager, WeatherManager
 
 
 if not os.path.exists("logs"):
@@ -27,12 +27,16 @@ rotateHandler.setLevel(logging.DEBUG)
 gunicorn_error_handlers = logging.getLogger("gunicorn.error").handlers
 
 db = SQLAlchemy()
+geo_manager = GeoManager()
+weather_manager = WeatherManager()
 
 
 def register_extensions(app: Flask):
     """Регистрация расширений."""
     db.init_app(app)
-    
+    geo_manager.init_app(app)
+    weather_manager.init_app(app)
+
 
 
 def register_blueprints(app: Flask):
@@ -63,5 +67,5 @@ def create_app(config):
     configure_database(app)
     app.logger.addHandler(rotateHandler)
     app.logger.setLevel(logging.DEBUG)
-    app.logger.info("========== AntiP System START ==========")
+    app.logger.info("========== API START ==========")
     return app

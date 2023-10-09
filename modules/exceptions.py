@@ -1,2 +1,2 @@
-class FailGeoException(Exception):
+class ManagerRequestException(Exception):
     pass
