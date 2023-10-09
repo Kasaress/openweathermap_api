@@ -1,0 +1,17 @@
+# Конфигурация ядра приложения
+SECRET_KEY: 4r5345kjnvefkmg49bsfdbmlekdfn2
+DEBUG: True
+HOST: 0.0.0.0
+PORT: 5065
+SSL: adhoc
+
+
+# Конфигурация БД
+db:
+  engine: postgresql
+  host: dev.dib.local
+  port: 5432
+  name: TESTS
+  user: admin
+  pass: admin
+
