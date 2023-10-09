@@ -8,6 +8,8 @@ from concurrent_log_handler import ConcurrentRotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
+
 if not os.path.exists("logs"):
     os.mkdir("logs")
 
@@ -30,6 +32,7 @@ db = SQLAlchemy()
 def register_extensions(app: Flask):
     """Регистрация расширений."""
     db.init_app(app)
+    
 
 
 def register_blueprints(app: Flask):

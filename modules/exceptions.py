@@ -1,0 +1,2 @@
+class FailGeoException(Exception):
+    pass
