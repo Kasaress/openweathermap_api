@@ -42,7 +42,7 @@ def register_blueprints(app: Flask):
 def configure_database(app: Flask):
     """Конфигурация БД."""
 
-    @app.before_first_request
+    # @app.before_first_request
     def initialize_database():
         db.create_all()
 
