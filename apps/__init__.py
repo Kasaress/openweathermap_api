@@ -6,10 +6,11 @@ from importlib import import_module
 
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 from flask import Flask
+from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
-from modules.managers import GeoManager, WeatherManager
+
 from modules.collector import Collector
-from sqlalchemy import create_engine
+from modules.managers import GeoManager, WeatherManager
 
 if not os.path.exists("logs"):
     os.mkdir("logs")
@@ -32,11 +33,13 @@ db = SQLAlchemy()
 geo_manager = GeoManager()
 weather_manager = WeatherManager()
 collector = Collector(geo_manager, weather_manager)
+scheduler = APScheduler()
 
 
 def register_extensions(app: Flask):
     """Регистрация расширений."""
     db.init_app(app)
+    scheduler.init_app(app)
     geo_manager.init_app(app)
     weather_manager.init_app(app)
 
@@ -54,9 +57,7 @@ def configure_database(app: Flask):
     def initialize_database():
         with app.app_context():
             from apps.home.models import City, Weather
-            # engine = create_engine("sqlite://", echo=True)
             db.create_all()
-            # Base.metadata.create_all(engine)
             from modules.init_defaults import init_defaults
             init_defaults()
 
@@ -65,6 +66,11 @@ def configure_database(app: Flask):
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()
+
+
+def add_scheduler_jobs(app, scheduler, config):
+    from modules.init_defaults import add_jobs
+    add_jobs(app, scheduler)
 
 
 def create_app(config):
@@ -77,4 +83,6 @@ def create_app(config):
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
+    scheduler.start()
+    add_scheduler_jobs(app, scheduler, config)
     return app

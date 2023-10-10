@@ -1,6 +1,7 @@
+from flask import jsonify
+
 from apps import collector
 from apps.home import blueprint
-from flask import jsonify
 from modules.exceptions import NotFoundCityException
 
 

@@ -1,8 +1,10 @@
 
-from .managers import GeoManager, WeatherManager
-from .exceptions import NotFoundCityException
-from flask import current_app as app
 import datetime
+
+from flask import current_app as app
+
+from .exceptions import NotFoundCityException
+from .managers import GeoManager, WeatherManager
 
 
 class Collector:
@@ -49,5 +51,5 @@ class Collector:
         city = self._get_city(name)
         lat, lon = self.geo_manager.get_coordinates(city.name)
         temp = self.weather_manager.get_temperature(lat, lon)
-        print(temp)
         self._update_temp(city, temp)
+        app.logger.info(f'В городе {city.name} температура {temp}')

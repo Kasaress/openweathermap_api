@@ -1,10 +1,13 @@
-import requests
-from apps.config import config
-from flask import current_app as app
-from .exceptions import ManagerRequestException
-from flask import Flask
 from abc import ABC, abstractmethod
 from typing import final
+
+import requests
+from flask import Flask
+from flask import current_app as app
+
+from apps.config import config
+
+from .exceptions import ManagerRequestException
 
 
 class Manager(ABC):
