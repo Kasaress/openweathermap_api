@@ -41,23 +41,15 @@ class Config(ConfigClass):
     """
     def __init__(self, filename):
         ConfigClass.__init__(self, filename)
-
         # Конфигурация PostgreSQL
         # Прочитать логин и пароль, содержащие спец символы
-        sql_db_user = urllib.parse.quote_plus(self.get("db.user"))
-        sql_db_pass = urllib.parse.quote_plus(self.get("db.pass"))
-        self.SQLALCHEMY_DATABASE_URI = f"{self.get('db.engine')}://{sql_db_user}:{sql_db_pass}@{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
+        # sql_db_user = urllib.parse.quote_plus(self.get("db.user"))
+        # sql_db_pass = urllib.parse.quote_plus(self.get("db.pass"))
+        # self.SQLALCHEMY_DATABASE_URI = f"{self.get('db.engine')}://{sql_db_user}:{sql_db_pass}@{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
+        self.SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+        self.DB_INFO = 'sqlite:////test.db'
         self.SQLALCHEMY_TRACK_MODIFICATIONS = True
-        self.JSON_SORT_KEYS = False
-
-        # Настройки безопасности
-        if not self.get("DEBUG"):
-            self.SESSION_COOKIE_HTTPONLY = True
-            self.REMEMBER_COOKIE_HTTPONLY = True
-            self.REMEMBER_COOKIE_DURATION = 3600
-            self.SESSION_PROTECTION = "strong"
-        else:
-            self.DB_INFO = f"{self.get('db.engine')}://{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
+        # self.DB_INFO = f"{self.get('db.engine')}://{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
 
 
 # Загрузка всех конфигураций

@@ -53,6 +53,9 @@ def configure_database(app: Flask):
     def initialize_database():
         db.create_all()
 
+    with app.app_context():
+        initialize_database()
+
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()

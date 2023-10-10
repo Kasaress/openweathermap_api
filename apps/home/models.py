@@ -6,7 +6,7 @@ class City(db.Model):
 
     __tablename__ = 'City'
 
-    id = db.Column(db.String(64), primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     uuid = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(30), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
