@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
-import urllib.parse
 from threading import Lock
-
+import os
 import yaml
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
@@ -42,15 +41,10 @@ class Config(ConfigClass):
     """
     def __init__(self, filename):
         ConfigClass.__init__(self, filename)
-        # Конфигурация PostgreSQL
-        # Прочитать логин и пароль, содержащие спец символы
-        # sql_db_user = urllib.parse.quote_plus(self.get("db.user"))
-        # sql_db_pass = urllib.parse.quote_plus(self.get("db.pass"))
-        # self.SQLALCHEMY_DATABASE_URI = f"{self.get('db.engine')}://{sql_db_user}:{sql_db_pass}@{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
-        self.SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
-        self.DB_INFO = 'sqlite:////test.db'
+        db_path = os.path.join(os.path.dirname(__file__), 'app.db')
+        db_uri = 'sqlite:///{}'.format(db_path)
+        self.SQLALCHEMY_DATABASE_URI = db_uri
         self.SQLALCHEMY_TRACK_MODIFICATIONS = True
-        # self.DB_INFO = f"{self.get('db.engine')}://{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
         self.SCHEDULER_JOBSTORES = {
             "default": SQLAlchemyJobStore(
                 url=self.SQLALCHEMY_DATABASE_URI, tablename="TaskCalendarDMZ"
@@ -58,6 +52,7 @@ class Config(ConfigClass):
         }
         self.SCHEDULER_API_ENABLED = True
         self.SCHEDULER_TIMEZONE = "Europe/Moscow"
+
 
 # Загрузка всех конфигураций
 config = Config("./config.yaml")
