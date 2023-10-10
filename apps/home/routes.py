@@ -1,10 +1,10 @@
-from apps import db
-from apps.config import config
-from apps.home import blueprint
-from flask import current_app as app
 from flask import jsonify
 
+from apps.home import blueprint
 
-@blueprint.route("/index", methods=["GET"])
-def profile():
-    return jsonify({'status': 'success'})
+
+@blueprint.route("/", methods=["GET"])
+def index():
+    return jsonify({
+        'status': 'я работаю',
+        })

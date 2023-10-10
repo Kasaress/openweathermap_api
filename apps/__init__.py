@@ -6,7 +6,10 @@ from importlib import import_module
 
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 from flask import Flask
+from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
+
+from modules.managers import GeoManager, WeatherManager
 
 if not os.path.exists("logs"):
     os.mkdir("logs")
@@ -22,14 +25,18 @@ rotateHandler.setFormatter(
 )
 rotateHandler.setLevel(logging.DEBUG)
 
-gunicorn_error_handlers = logging.getLogger("gunicorn.error").handlers
-
 db = SQLAlchemy()
+geo_manager = GeoManager()
+weather_manager = WeatherManager()
+scheduler = APScheduler()
 
 
 def register_extensions(app: Flask):
     """Регистрация расширений."""
     db.init_app(app)
+    scheduler.init_app(app)
+    geo_manager.init_app(app)
+    weather_manager.init_app(app)
 
 
 def register_blueprints(app: Flask):
@@ -41,24 +48,35 @@ def register_blueprints(app: Flask):
 
 def configure_database(app: Flask):
     """Конфигурация БД."""
-
-    # @app.before_first_request
     def initialize_database():
-        db.create_all()
+        with app.app_context():
+            from apps.home.models import City, Weather
+            db.create_all()
+            from modules.init_defaults import init_defaults
+            init_defaults()
+
+    initialize_database()
 
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()
 
 
+def add_scheduler_jobs(app, scheduler, config):
+    from modules.init_defaults import add_jobs
+    add_jobs(app, scheduler)
+
+
 def create_app(config):
     """Создание приложения."""
     app = Flask(__name__)
     app.config.from_object(config)
+    app.logger.addHandler(rotateHandler)
+    app.logger.setLevel(logging.DEBUG)
+    app.logger.info("========== API START ==========")
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
-    app.logger.addHandler(rotateHandler)
-    app.logger.setLevel(logging.DEBUG)
-    app.logger.info("========== AntiP System START ==========")
+    scheduler.start()
+    add_scheduler_jobs(app, scheduler, config)
     return app
