@@ -11,5 +11,5 @@ def weather_job():
     with scheduler.app.app_context():
         collector = Collector(geo_manager, weather_manager)
         for city in cities:
-            collector.update_temperature(city)
+            collector.update_temp(city)
         app.logger.info('Выполнена задача "weather_job"')

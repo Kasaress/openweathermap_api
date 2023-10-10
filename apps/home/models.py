@@ -50,7 +50,7 @@ class Weather(db.Model):
         default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow
     )
-    temperature = db.Column(db.Integer)
+    temperature = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
         return str(self.temperature)

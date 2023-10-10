@@ -6,7 +6,7 @@ from flask import current_app as app
 from apps import db
 from apps.home.models import City, Weather
 
-from .exceptions import NotFoundCityException, ManagerRequestException
+from .exceptions import NotFoundCityException
 from .managers import GeoManager, WeatherManager
 
 
@@ -27,30 +27,30 @@ class Collector:
             raise NotFoundCityException
         return city
 
-    def _get_or_create_weather(self, city, temp: float) -> Weather:
+    def _get_or_create_weather(self, city) -> Weather:
         weater = Weather.query.filter_by(city_id=city.id).first()
         if not weater:
             new_weather = Weather(
                 city_id=city.id,
-                temperature=temp
             )
             db.session.add(new_weather)
             db.session.commit()
             app.logger.info(
-                f'Создали новую запись погоды для города {city} {new_weather}'
+                f'Создана новая запись погоды для города {city}'
             )
             return new_weather
         return weater
 
     def _update_temp(self, city, temp: float) -> None:
-        weater = self._get_or_create_weather(city, temp)
+        weater = self._get_or_create_weather(city)
         weater.temperature = temp
         weater.edited_at = datetime.datetime.utcnow()
         db.session.add(weater)
         db.session.commit()
 
-    def update_temperature(self, name: str) -> None:
+    def update_temp(self, name: str) -> None:
         city = self._get_city(name)
         lat, lon = self.geo_manager.get_coordinates(city.name)
         temp = self.weather_manager.get_temperature(lat, lon)
         self._update_temp(city, temp)
+        app.logger.info(f'Обновление {city.name}, температура: {temp}')
