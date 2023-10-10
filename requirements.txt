@@ -23,6 +23,10 @@ PyYAML==6.0.1
 requests==2.31.0
 six==1.16.0
 SQLAlchemy==2.0.21
+types-Flask-SQLAlchemy==2.5.9.4
+types-PyYAML==6.0.12.12
+types-requests==2.31.0.8
+types-SQLAlchemy==1.4.53.38
 typing_extensions==4.8.0
 tzlocal==5.1
 urllib3==2.0.6

@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import urllib.parse
 from threading import Lock
+
 import yaml
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
@@ -46,7 +47,7 @@ class Config(ConfigClass):
         # sql_db_user = urllib.parse.quote_plus(self.get("db.user"))
         # sql_db_pass = urllib.parse.quote_plus(self.get("db.pass"))
         # self.SQLALCHEMY_DATABASE_URI = f"{self.get('db.engine')}://{sql_db_user}:{sql_db_pass}@{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"
-        self.SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+        self.SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
         self.DB_INFO = 'sqlite:////test.db'
         self.SQLALCHEMY_TRACK_MODIFICATIONS = True
         # self.DB_INFO = f"{self.get('db.engine')}://{self.get('db.host')}:{self.get('db.port')}/{self.get('db.name')}"

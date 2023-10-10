@@ -9,7 +9,7 @@ from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
 
-from modules.collector import Collector
+# from modules.collector import Collector
 from modules.managers import GeoManager, WeatherManager
 
 if not os.path.exists("logs"):
@@ -32,7 +32,7 @@ rotateHandler.setLevel(logging.DEBUG)
 db = SQLAlchemy()
 geo_manager = GeoManager()
 weather_manager = WeatherManager()
-collector = Collector(geo_manager, weather_manager)
+# collector = Collector(geo_manager, weather_manager)
 scheduler = APScheduler()
 
 

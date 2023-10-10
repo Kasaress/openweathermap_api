@@ -4,6 +4,7 @@ from flask import current_app as app
 from sqlalchemy import select
 
 from apps import db, geo_manager
+from apps.config import config
 from apps.home.largest_cities import cities
 from apps.home.models import City
 from apps.home.tasker import weather_job
@@ -38,8 +39,9 @@ def add_jobs(app, scheduler):
                 'Обновление температуры',
                 weather_job,
                 trigger="interval",
-                minutes=1,
+                minutes=config.get('scheduler_interval'),
                 replace_existing=True,
             )
+            app.logger.info("Добавлена новая задача.")
         except Exception as error:
             print(error)
