@@ -130,3 +130,6 @@ dmypy.json
 
 # virt
 .vscode/
+
+/logs
+.log

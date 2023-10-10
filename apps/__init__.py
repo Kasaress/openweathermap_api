@@ -8,6 +8,7 @@ from concurrent_log_handler import ConcurrentRotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from modules.managers import GeoManager, WeatherManager
+from modules.collector import Collector
 
 
 if not os.path.exists("logs"):
@@ -24,11 +25,13 @@ rotateHandler.setFormatter(
 )
 rotateHandler.setLevel(logging.DEBUG)
 
-gunicorn_error_handlers = logging.getLogger("gunicorn.error").handlers
+# gunicorn_error_handlers = logging.getLogger("gunicorn.error").handlers
+
 
 db = SQLAlchemy()
 geo_manager = GeoManager()
 weather_manager = WeatherManager()
+collector = Collector(geo_manager, weather_manager)
 
 
 def register_extensions(app: Flask):
@@ -36,7 +39,6 @@ def register_extensions(app: Flask):
     db.init_app(app)
     geo_manager.init_app(app)
     weather_manager.init_app(app)
-
 
 
 def register_blueprints(app: Flask):
@@ -48,13 +50,15 @@ def register_blueprints(app: Flask):
 
 def configure_database(app: Flask):
     """Конфигурация БД."""
-
     # @app.before_first_request
     def initialize_database():
-        db.create_all()
+        with app.app_context():
+            from apps.home.models import City, Weather
+            db.create_all()
+            from modules.init_defaults import init_defaults
+            init_defaults()
 
-    with app.app_context():
-        initialize_database()
+    initialize_database()
 
     @app.teardown_request
     def shutdown_session(exception=None):
@@ -65,10 +69,10 @@ def create_app(config):
     """Создание приложения."""
     app = Flask(__name__)
     app.config.from_object(config)
-    register_extensions(app)
-    register_blueprints(app)
-    configure_database(app)
     app.logger.addHandler(rotateHandler)
     app.logger.setLevel(logging.DEBUG)
     app.logger.info("========== API START ==========")
+    register_extensions(app)
+    register_blueprints(app)
+    configure_database(app)
     return app

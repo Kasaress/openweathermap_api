@@ -1,25 +1,17 @@
-from apps import geo_manager, weather_manager, db
+from apps import collector
 from apps.home import blueprint
 from flask import jsonify
-from apps.home.models import City
-import uuid
+from modules.exceptions import NotFoundCityException
 
 
-@blueprint.route("/", methods=["GET"])
-def index():
-    
-    lat, lon = geo_manager.get_coordinates('London')
-    temperature = weather_manager.get_temperature(lat, lon)
-    london = City(
-        uuid=str(uuid.uuid4()),
-        name='London',
-        latitude=lat,
-        longitude=lon
-    )
-    db.session.add(london)
-    db.session.commit()
-    return jsonify({
-        'lat': lat,
-        'lon': lon,
-        'temp': temperature,
-        })
+@blueprint.route("/<city_name>", methods=["GET"])
+def index(city_name):
+    try:
+        collector.update_temperature(city_name)
+        return jsonify({
+            'city': city_name,
+            })
+    except NotFoundCityException as error:
+        return jsonify({
+            'error': str(error),
+            })
