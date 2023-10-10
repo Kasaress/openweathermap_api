@@ -37,10 +37,20 @@ class GeoManager(Manager):
 
     def get_coordinates(self, city: str) -> tuple[float]:
         url = self._get_url(city)
-        geo_data = self._get_data(url)[0]
-        lat = geo_data.get('lat')
-        lon = geo_data.get('lon')
-        return lat, lon
+        try:
+            geo_data = self._get_data(url)[0]
+            lat = geo_data.get('lat')
+            lon = geo_data.get('lon')
+            return lat, lon
+        except ManagerRequestException as error:
+            app.logger.error(
+                f'Ошибка получения данных от API: {error}'
+            )
+        except IndexError as error:
+            app.logger.error(
+                f'API не содержит данные о городе {city}: {error}'
+            )
+        return None, None
 
 
 class WeatherManager(Manager):
@@ -52,5 +62,8 @@ class WeatherManager(Manager):
         )
 
     def get_temperature(self, lat: float, lon: float) -> float:
+        if not lat or not lon:
+            app.logger.warning('Отсутствуют координаты.')
+            return None
         url = self._get_url(lat, lon)
         return self._get_data(url).get('main').get('temp')

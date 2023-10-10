@@ -12,7 +12,6 @@ class City(db.Model):
         unique=True,
         autoincrement=True
     )
-    uuid = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(30), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     edited_at = db.Column(
@@ -20,8 +19,8 @@ class City(db.Model):
         default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow
     )
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     weather_id = db.Column(db.Integer, db.ForeignKey("Weather.id"))
 
     def __repr__(self):
