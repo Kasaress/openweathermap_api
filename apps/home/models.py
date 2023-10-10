@@ -12,7 +12,6 @@ class City(db.Model):
         unique=True,
         autoincrement=True
     )
-    uuid = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(30), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     edited_at = db.Column(

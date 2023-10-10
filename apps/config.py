@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
-from threading import Lock
 import os
+from threading import Lock
+
 import yaml
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 

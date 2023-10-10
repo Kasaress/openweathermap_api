@@ -1,5 +1,3 @@
-import uuid
-
 from flask import current_app as app
 from sqlalchemy import select
 
@@ -18,7 +16,6 @@ def init_defaults():
         if not db.session.scalars(query).first():
             lat, lon = geo_manager.get_coordinates(city)
             new_city = City(
-                uuid=str(uuid.uuid4()),
                 name=name,
                 latitude=lat,
                 longitude=lon
