@@ -19,8 +19,8 @@ class City(db.Model):
         default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow
     )
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
     weather_id = db.Column(db.Integer, db.ForeignKey("Weather.id"))
 
     def __repr__(self):

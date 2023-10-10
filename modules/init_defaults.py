@@ -9,12 +9,17 @@ from apps.home.tasker import weather_job
 
 
 def init_defaults():
-    """Заполнить таблицу городов стартовыми данными."""
+    """Заполняет таблицу городов стартовыми данными."""
     for city in cities:
         name = city.lower()
         query = select(City).where(City.name == name)
-        if not db.session.scalars(query).first():
-            lat, lon = geo_manager.get_coordinates(city)
+        if db.session.scalars(query).first():
+            continue
+        lat, lon = geo_manager.get_coordinates(city)
+        if not lat or not lon:
+            app.logger.error(f"Ошибка получения координат {name}.")
+            continue
+        try:
             new_city = City(
                 name=name,
                 latitude=lat,
@@ -27,9 +32,12 @@ def init_defaults():
                 f"longitude: {new_city.longitude}"
             )
             db.session.commit()
+        except Exception as error:
+            app.logger.error(f"Ошибка сохранения координат: {error}.")
 
 
 def add_jobs(app, scheduler):
+    """Добавляет регулярную задачу обновления температуры."""
     with app.app_context():
         try:
             scheduler.add_job(
@@ -41,4 +49,4 @@ def add_jobs(app, scheduler):
             )
             app.logger.info("Добавлена новая задача.")
         except Exception as error:
-            print(error)
+            app.logger.error(error)

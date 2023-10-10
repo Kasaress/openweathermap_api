@@ -1,13 +1,9 @@
-import logging
-
 import pytest
 from flask import Flask
-from flask.testing import FlaskClient
 from flask_sqlalchemy import SQLAlchemy
-from apps.home.models import City
 
-logger = logging.getLogger("tests")
-logger.setLevel(logging.DEBUG)
+from apps.home.models import City
+from modules.collector import Collector
 
 
 @pytest.fixture(scope="session")
@@ -26,8 +22,20 @@ def geo_manager():
 
 
 @pytest.fixture(scope="session")
-def client(app: Flask) -> FlaskClient:
-    return app.test_client()
+def weather_manager():
+    from apps import weather_manager
+    return weather_manager
+
+
+@pytest.fixture(scope="session")
+def scheduler():
+    from apps import scheduler
+    return scheduler
+
+
+@pytest.fixture(scope="session")
+def collector(geo_manager, weather_manager):
+    return Collector(geo_manager, weather_manager)
 
 
 @pytest.fixture(scope="session")
@@ -54,7 +62,6 @@ def tear_up_down_db(db: SQLAlchemy, app: Flask):
 
         except Exception as e:
             db.session.rollback()
-            logging.error(e)
 
         yield
 
