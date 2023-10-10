@@ -5,13 +5,15 @@ from apps import db
 from apps.home.models import City
 from apps.home.largest_cities import cities
 from apps import geo_manager
+from sqlalchemy import select
 
 
 def init_defaults():
     """Заполнить таблицу городов стартовыми данными."""
     for city in cities:
         name = city.lower()
-        if not City.query.filter_by(name=name).first():
+        query = select(City).where(City.name == name)
+        if not db.session.scalars(query).first():
             lat, lon = geo_manager.get_coordinates(city)
             new_city = City(
                 uuid=str(uuid.uuid4()),

@@ -1,5 +1,6 @@
 cities = (
     'Tokyo',
+    'Delhi',
 )
 
 # cities = (

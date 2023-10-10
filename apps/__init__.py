@@ -9,7 +9,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from modules.managers import GeoManager, WeatherManager
 from modules.collector import Collector
-
+from sqlalchemy import create_engine
 
 if not os.path.exists("logs"):
     os.mkdir("logs")
@@ -54,7 +54,9 @@ def configure_database(app: Flask):
     def initialize_database():
         with app.app_context():
             from apps.home.models import City, Weather
+            # engine = create_engine("sqlite://", echo=True)
             db.create_all()
+            # Base.metadata.create_all(engine)
             from modules.init_defaults import init_defaults
             init_defaults()
 

@@ -34,6 +34,7 @@ class Collector:
             )
             db.session.add(new_weather)
             db.session.commit()
+            return new_weather
         return weater
 
     def _update_temp(self, city, temp: float) -> None:
