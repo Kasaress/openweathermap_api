@@ -9,7 +9,6 @@ from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
 
-# from modules.collector import Collector
 from modules.managers import GeoManager, WeatherManager
 
 if not os.path.exists("logs"):
@@ -26,13 +25,9 @@ rotateHandler.setFormatter(
 )
 rotateHandler.setLevel(logging.DEBUG)
 
-# gunicorn_error_handlers = logging.getLogger("gunicorn.error").handlers
-
-
 db = SQLAlchemy()
 geo_manager = GeoManager()
 weather_manager = WeatherManager()
-# collector = Collector(geo_manager, weather_manager)
 scheduler = APScheduler()
 
 
@@ -53,7 +48,6 @@ def register_blueprints(app: Flask):
 
 def configure_database(app: Flask):
     """Конфигурация БД."""
-    # @app.before_first_request
     def initialize_database():
         with app.app_context():
             from apps.home.models import City, Weather

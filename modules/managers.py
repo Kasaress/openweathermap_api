@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import final
 
 import requests
@@ -17,10 +17,6 @@ class Manager(ABC):
     @final
     def init_app(self, app: Flask):
         self.api_key = app.config.get('API_KEY')
-
-    @abstractmethod
-    def _get_url(self) -> str:
-        pass
 
     def _get_data(self, url: str):
         try:

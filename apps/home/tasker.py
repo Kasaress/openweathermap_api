@@ -7,6 +7,7 @@ from .largest_cities import cities
 
 
 def weather_job():
+    """Запускает задачу обновления температуры."""
     with scheduler.app.app_context():
         collector = Collector(geo_manager, weather_manager)
         for city in cities:

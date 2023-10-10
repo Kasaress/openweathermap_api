@@ -6,7 +6,7 @@ from flask import current_app as app
 from apps import db
 from apps.home.models import City, Weather
 
-from .exceptions import NotFoundCityException
+from .exceptions import NotFoundCityException, ManagerRequestException
 from .managers import GeoManager, WeatherManager
 
 
